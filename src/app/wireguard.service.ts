@@ -13,9 +13,7 @@ export class WireguardService {
 
   getWireguardStat(): void {
     this.http.get<ClientModel[]>('https://api.monitoring.agungdh.com/wireguard').subscribe(data => {
-      console.log(data[0].client)
-      console.log(data[0].stat.allowedIps)
-      console.log(data[0].stat.endpoint)
+      console.log(data);
     });
   }
 }
