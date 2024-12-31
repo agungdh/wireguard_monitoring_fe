@@ -1,33 +1,30 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
 import { MatTableModule, MatTable } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
-import { WireguardMonitoringDataSource, WireguardMonitoringItem } from './wireguard-monitoring-datasource';
 import {WireguardService} from '../wireguard.service';
+import {ClientModel} from '../client.model';
+import {Observable} from 'rxjs';
+import {AsyncPipe, DecimalPipe} from '@angular/common';
 
 @Component({
   selector: 'app-wireguard-monitoring',
   templateUrl: './wireguard-monitoring.component.html',
   styleUrl: './wireguard-monitoring.component.css',
   standalone: true,
-  imports: [MatTableModule, MatPaginatorModule, MatSortModule]
+  imports: [MatTableModule, MatPaginatorModule, MatSortModule, AsyncPipe, DecimalPipe]
 })
-export class WireguardMonitoringComponent implements AfterViewInit {
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<WireguardMonitoringItem>;
-  dataSource = new WireguardMonitoringDataSource();
+export class WireguardMonitoringComponent implements OnInit {
+  wireguardService: WireguardService = inject(WireguardService);
 
-  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name'];
+  localTime: string = new Date().toLocaleString();
+  datas$: Observable<ClientModel[]> = new Observable<ClientModel[]>();
 
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
+  ngOnInit(): void {
+    this.datas$ = this.wireguardService.getWireguardStat()
   }
 
-  constructor(private wireguardService: WireguardService) {
-    this.wireguardService.getWireguardStat()
+  convertIsoToDate(date: string): string {
+    return new Date(date).toLocaleString();
   }
 }
