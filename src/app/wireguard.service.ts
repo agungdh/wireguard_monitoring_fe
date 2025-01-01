@@ -10,6 +10,6 @@ export class WireguardService {
   private httpClient: HttpClient = inject(HttpClient);
 
   getWireguardStat(): Observable<ClientModel[]> {
-    return this.httpClient.get<ClientModel[]>('https://api.monitoring.agungdh.com/wireguard')
+    return this.httpClient.get<ClientModel[]>('https://api.vpn.agungdh.my.id/wireguard')
   }
 }
